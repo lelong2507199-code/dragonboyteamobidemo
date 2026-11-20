@@ -1,0 +1,14 @@
+#!/usr/bin/env sh
+# Lightweight bootstrap for Gradle 8.10.2; downloads official Gradle distribution on first run.
+set -eu
+V=8.10.2
+BASE="${GRADLE_USER_HOME:-$HOME/.gradle}/wrapper/dists/gradle-$V-bin/local"
+DIST="$BASE/gradle-$V"
+if [ ! -x "$DIST/bin/gradle" ]; then
+  mkdir -p "$BASE"
+  ARCHIVE="$BASE/gradle-$V-bin.zip"
+  command -v curl >/dev/null 2>&1 || { echo "Install curl first"; exit 1; }
+  curl -fL "https://services.gradle.org/distributions/gradle-$V-bin.zip" -o "$ARCHIVE"
+  unzip -q -o "$ARCHIVE" -d "$BASE"
+fi
+exec "$DIST/bin/gradle" "$@"
